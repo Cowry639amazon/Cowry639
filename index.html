@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Cowry639のホームページ</title>
+    <link rel="stylesheet" href="Cowry639.css">
+</head>
+<body>
+    <header></header>
+    <main>
+        <section id="green" class="b">
+            <h1 id="red">Cowry639のホームページ</h1>
+            <h2>自己紹介</h2>
+            <img src="Cowry639.jpg" alt="Cowry639の画像" id="Cowry639-icon">
+            <p>こんにちは<span style="color:red">Cowry639</span>です。生き物好きの男子です。<br>最近Htmlを始めました。ここはCowry639のやっているサイトへ飛ぶためのサイトです。</p>
+        </section>
+
+        <section id="green">
+            <h2>サイトのリンク集</h2>
+            <p>モチベーションにつながりますので<span class="red">フォローよろしくお願いします！</span></p>
+            <li>
+                <a href="https://www.inaturalist.org/people/8773832"><img src="INaturalist_logo.png" alt="INaturalist_logo" width="300px"></a>
+                <p>inaturalistへのリンクです</p>
+            </li>
+            <li>
+                <a href="https://scratch.mit.edu/users/dragonquestXI/"><img src="Scratch.jpg" alt="Scratch" width="300px"></a>
+                <p>Scratchへのリンクです</p>
+            </li>
+            <li>
+                <a href="https://note.com/cowry639"><img src="note.jpg" alt="note" width="300px"></a>
+                <p>noteへのリンクです</p>
+            </li>
+        </section>
+
+        <section id="green">
+            <h2>コメント</h2>
+            <div class="comment">
+                <p>このサイトでのコメントはここに打ち込みください</p>
+
+                <!-- comments-list を form の外に移動！ -->
+                <form id="comment-form">
+                    <div class="item">
+                        <label class="label" for="username">名前</label>
+                        <input type="text" id="username" placeholder="名前">
+                    </div>
+                    <div class="item">
+                        <label class="label" for="comment-text">コメント</label>
+                        <textarea class="inputs" id="comment-text" placeholder="コメントはこちら"></textarea>
+                    </div>
+                    <div class="button">
+                        <input type="button" id="submit-btn" value="送信">
+                        <input type="reset" value="取り消し">
+                    </div>
+                </form>
+
+                <div class="comments-list" id="comments-list">
+                    <h2>コメント一覧</h2>
+                </div>
+
+            </div>
+        </section>
+    </main>
+    <footer></footer>
+
+<script>
+let commentId = 1;
+
+// ページ読み込み：保存済みコメントを復元
+window.onload = function() {
+    const savedComments = JSON.parse(localStorage.getItem('comments')) || [];
+    savedComments.forEach(comment => {
+        addCommentToDOM(comment.id, comment.text, comment.username, comment.replies || []);
+        commentId = Math.max(commentId, comment.id + 1);
+    });
+};
+
+// コメント送信
+document.getElementById('submit-btn').onclick = function() {
+    const commentText = document.getElementById('comment-text').value.trim();
+    const username = document.getElementById('username').value.trim();
+    if (!username) return showToast('名前を入力してください', this);
+    if (!commentText) return showToast('コメントを入力してください', this);
+
+    addCommentToDOM(commentId, commentText, username, []);
+
+    const savedComments = JSON.parse(localStorage.getItem('comments')) || [];
+    savedComments.push({ id: commentId, text: commentText, username: username, replies: [] });
+    localStorage.setItem('comments', JSON.stringify(savedComments));
+
+    commentId++;
+    document.getElementById('comment-text').value = '';
+    return false;
+};
+
+// コメントを表示
+function addCommentToDOM(id, text, username, replies) {
+    const commentElement = document.createElement('div');
+    commentElement.classList.add('comment');
+    commentElement.id = 'comment-' + id;
+
+    const textNode = document.createElement('p');
+    textNode.innerHTML = `<strong>${username}</strong><br>${text}`;
+    commentElement.appendChild(textNode);
+
+    const buttonWrapper = document.createElement('div');
+
+    // 削除ボタン
+    const deleteBtn = document.createElement('button');
+    deleteBtn.type = 'button';
+    deleteBtn.textContent = '削除';
+    deleteBtn.classList.add('delete-btn');
+    deleteBtn.onclick = function(e) {
+        showDeleteConfirm(e.target, () => {
+            commentElement.remove();
+            const savedComments = JSON.parse(localStorage.getItem('comments')) || [];
+            const newComments = savedComments.filter(c => c.id !== id);
+            localStorage.setItem('comments', JSON.stringify(newComments));
+        });
+    };
+    buttonWrapper.appendChild(deleteBtn);
+
+    // 返信ボタン
+    const replyBtn = document.createElement('button');
+    replyBtn.type = 'button';
+    replyBtn.textContent = '返信';
+    replyBtn.classList.add('reply-btn');
+    replyBtn.onclick = function() {
+        showReplyInput(id);
+    };
+    buttonWrapper.appendChild(replyBtn);
+
+    commentElement.appendChild(buttonWrapper);
+
+    // 返信リスト
+    const replyList = document.createElement('div');
+    replyList.id = 'replies-' + id;
+    replies.forEach(r => addReplyToDOM(id, r.text, r.username, false));
+    commentElement.appendChild(replyList);
+
+    document.getElementById('comments-list').appendChild(commentElement);
+}
+
+// 返信入力欄（名前欄追加）
+function showReplyInput(commentId) {
+    const replyList = document.getElementById('replies-' + commentId);
+    if (document.getElementById('reply-input-' + commentId)) return;
+
+    const inputWrapper = document.createElement('div');
+    inputWrapper.id = 'reply-input-' + commentId;
+
+    const nameInput = document.createElement('input');
+    nameInput.placeholder = '名前';
+    nameInput.style.width = '90%';
+
+    const textarea = document.createElement('textarea');
+    textarea.placeholder = '返信はこちら';
+    textarea.rows = 3;
+    textarea.style.width = '90%';
+
+    const sendBtn = document.createElement('button');
+    sendBtn.type = 'button';
+    sendBtn.textContent = '送信';
+    sendBtn.onclick = function() {
+        const replyText = textarea.value.trim();
+        const username = nameInput.value.trim();
+
+        if (!username) return showToast('名前を入力してください', sendBtn);
+        if (!replyText) return showToast('返信内容を入力してください', sendBtn);
+
+        addReplyToDOM(commentId, replyText, username);
+
+        const savedComments = JSON.parse(localStorage.getItem('comments')) || [];
+        const comment = savedComments.find(c => c.id === commentId);
+        if (comment) {
+            comment.replies.push({ text: replyText, username: username });
+            localStorage.setItem('comments', JSON.stringify(savedComments));
+        }
+
+        inputWrapper.remove();
+    };
+
+    const cancelBtn = document.createElement('button');
+    cancelBtn.textContent = 'キャンセル';
+    cancelBtn.onclick = () => inputWrapper.remove();
+
+    inputWrapper.appendChild(nameInput);
+    inputWrapper.appendChild(textarea);
+    inputWrapper.appendChild(sendBtn);
+    inputWrapper.appendChild(cancelBtn);
+
+    replyList.appendChild(inputWrapper);
+}
+
+// 返信 DOM
+function addReplyToDOM(commentId, replyText, username, save = true) {
+    const replyList = document.getElementById('replies-' + commentId);
+
+    const replyDiv = document.createElement('div');
+    replyDiv.innerHTML = `<strong>${username}</strong><br>${replyText}`;
+    replyDiv.style.marginBottom = '5px';
+    replyDiv.style.background = '#f2f2f2';
+    replyDiv.style.padding = '5px 10px';
+    replyDiv.style.borderRadius = '5px';
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.type = 'button';
+    deleteBtn.textContent = '削除';
+    deleteBtn.style.marginLeft = '10px';
+    deleteBtn.onclick = function(e) {
+        showDeleteConfirm(e.target, () => {
+            replyDiv.remove();
+            if (save) {
+                const savedComments = JSON.parse(localStorage.getItem('comments')) || [];
+                const comment = savedComments.find(c => c.id === commentId);
+                if (comment) {
+                    comment.replies = comment.replies.filter(r => !(r.text === replyText && r.username === username));
+                    localStorage.setItem('comments', JSON.stringify(savedComments));
+                }
+            }
+        });
+    };
+    replyDiv.appendChild(deleteBtn);
+
+    replyList.appendChild(replyDiv);
+}
+
+// 削除確認
+function showDeleteConfirm(targetElement, onConfirm) {
+    const existing = document.getElementById('delete-confirm');
+    if (existing) existing.remove();
+
+    const confirmDiv = document.createElement('div');
+    confirmDiv.id = 'delete-confirm';
+    confirmDiv.style.position = 'absolute';
+    confirmDiv.style.background = '#ffcccc';
+    confirmDiv.style.border = '1px solid #900';
+    confirmDiv.style.padding = '6px 12px';
+    confirmDiv.style.borderRadius = '6px';
+    confirmDiv.style.zIndex = 1000;
+    confirmDiv.style.display = 'flex';
+    confirmDiv.style.gap = '10px';
+
+    confirmDiv.innerHTML = `
+        <span>本当に削除しますか？</span>
+        <button id="yes-btn">はい</button>
+        <button id="no-btn">いいえ</button>
+    `;
+
+    document.body.appendChild(confirmDiv);
+
+    const rect = targetElement.getBoundingClientRect();
+    confirmDiv.style.left = (rect.right + 10 + window.scrollX) + 'px';
+    confirmDiv.style.top = (rect.top + window.scrollY) + 'px';
+
+    document.getElementById('yes-btn').onclick = () => { onConfirm(); confirmDiv.remove(); };
+    document.getElementById('no-btn').onclick = () => confirmDiv.remove();
+}
+
+// トースト表示
+function showToast(message, targetElement) {
+    const toast = document.createElement('div');
+    toast.className = 'toast-message';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+
+    const rect = targetElement.getBoundingClientRect();
+    toast.style.position = 'absolute';
+    toast.style.left = (rect.right + 10 + window.scrollX) + 'px';
+    toast.style.top = (rect.top + window.scrollY) + 'px';
+    toast.style.background = '#ffd';
+    toast.style.padding = '8px 12px';
+    toast.style.border = '1px solid #aa0';
+    toast.style.borderRadius = '6px';
+    toast.style.opacity = 1;
+    toast.style.transition = 'opacity 0.3s';
+
+    setTimeout(() => {
+        toast.style.opacity = 0;
+        setTimeout(() => toast.remove(), 300);
+    }, 2000);
+}
+</script>
+</body>
+</html>
