@@ -1,0 +1,196 @@
+.red, #red{
+/*クラスまたはidをredと指定した部分について設定します**/
+    color: red;
+}
+
+#green p{
+/*idをredと指定した部分について設定します**/
+    color: rgb(0, 0, 0);
+}
+
+a:hover{
+/*マウスがリンクに触れた時について設定します**/
+    color: rgb(78, 135, 201);
+}
+
+input:hover{
+/*マウスがリンクに触れた時について設定します**/
+    color: rgb(255, 0, 0);
+}
+
+h2:before{
+/*h2の前の文字について設定します**/
+    content: "●";
+}
+
+html{
+/*フォントサイズの設定がやりやすくするためのもの
+正確には16pxが100%となっているところの基準を62.5%とすることで
+2remが20pxになるようにわかりやすくなります。**/
+    font-size: 62.5%;
+}
+
+body{
+/*視覚的に見えるところ全般の設定*/
+
+    font-size: 2rem;
+    /*62.5%を基準に設定します。*/
+
+    font-family: "Yu Mincho", "YuMincho";
+    /*フォントの種類をYu Minchoにします。
+    macの場合半角スペースがいらないので
+    区切ってもうひとつ書きましょう*/
+
+    font-weight: 900;
+    /*フォントの太さです。*/
+
+    text-align: center;
+    /*文字を画面のどこよりにするかの設定*/
+
+    line-height: 1.4;
+    /*文字同士の高さの設定*/
+
+    background-image: url(sea.jpg);
+    /*背景をsea.jpgにする*/
+
+    background-position: center;
+    /*背景を中心にする*/
+
+    background-attachment: fixed;
+    /*背景を固定する*/
+    background-size: 1350px;
+}
+
+#Cowry639-icon{
+    width: 40%;
+    border: 8px solid rgb(99, 39, 39);
+    padding: 0.0rem;
+    margin: 0.5rem;
+    box-sizing: border-box;
+}
+
+h1{
+    font-family: "";
+    -webkit-text-stroke: 9px #000;
+    paint-order: stroke;
+}
+
+#comments-list {
+    padding: 0px;
+    display: block;       /* 幅は中の内容に合わせる */
+    text-align: left;            /* コメントは左寄せ */
+    margin: 0 auto 0px auto;    /* 中央寄せ */
+    box-sizing: border
+}
+
+.comment {
+    display: inline-block;   /* 幅は文字に合わせるがブロック扱い */
+    max-width: 80%;          /* 親幅の80%まで広げる */
+    min-width: 200px;        /* 極端に小さくならない */
+    margin: 10px 0;          /* 上下の間隔 */
+    padding: 10px;           /* 内側の余白 */
+    border: 8px solid #aaa;
+    background-color: #fff;
+    text-align: center;        /* コメントの文字は左揃え */
+    box-sizing: border-box;
+    display: block;
+}F
+
+#comments-list .comment div[id^="replies-"] div {
+    border: 2px solid #ccc;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    display: inline-block;       /* 内容に合わせる */
+    box-sizing: border-box;
+    background-color: #ffffff;
+    display: block;
+}
+
+.item {
+    display: flex;
+    align-items: center;    /* ラベルと入力欄の縦方向を中央揃え */
+    justify-content: center; /* 横方向を中央揃え */
+    margin-bottom: 20px;
+    gap: 10px;              /* ラベルと入力欄の間のスペース */
+}
+
+.label {
+    font-size: 30px;
+    margin: 0;              /* 余白は不要 */
+}
+
+.inputs {
+    width: 300px;           /* 入力欄の幅 */
+    height: 90px;           /* 高さ */
+    font-size: 16px;
+    padding: 10px;
+    border-radius: 8px;
+    margin: 0;              /* 中央寄せは親の justify-content で制御 */
+}
+
+/* 送信ボタン */
+.button input[type="button"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+/* 取り消しボタン（赤） */
+.button input[type="reset"] {
+    background-color: #d9534f;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+/* 削除ボタン */
+.delete-btn {
+    background-color: #d9534f;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+/* 返信ボタン */
+.reply-btn {
+    background-color: #5cb85c;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+
+/* 返信の送信ボタン */
+.reply-send-btn {
+    background-color: #0275d8;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    margin-left: 8px;
+    cursor: pointer;
+}
+
+.toast-message {
+    position: absolute;
+    background-color: #ffcccc;
+    color: #900;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 1.4rem;
+    pointer-events: none; /* マウス操作は無効 */
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
